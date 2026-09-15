@@ -1,0 +1,75 @@
+.my-menu-toolbar {
+  position: fixed;
+  z-index: var(--layer-menu, 100);
+  left: 50%;
+  bottom: calc(
+    var(--my-menu-bottom, 12px) +
+    var(--my-menu-keyboard, 0px) +
+    env(safe-area-inset-bottom, 0px)
+  );
+  display: flex;
+  max-width: calc(100vw - 24px);
+  gap: var(--my-menu-gap, 4px);
+  padding: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  color: var(--text-normal);
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-s);
+  transform: translateX(-50%);
+  scrollbar-width: thin;
+  overscroll-behavior-inline: contain;
+  touch-action: pan-x;
+}
+
+.my-menu-toolbar[hidden] {
+  display: none;
+}
+
+.my-menu-button {
+  flex: 0 0 var(--my-menu-button-size, 36px);
+  width: var(--my-menu-button-size, 36px);
+  height: var(--my-menu-button-size, 36px);
+  padding: 6px;
+  color: var(--text-muted);
+  border-radius: var(--radius-s);
+  touch-action: manipulation;
+}
+
+.my-menu-button:hover,
+.my-menu-button:focus-visible {
+  color: var(--text-normal);
+  background: var(--background-modifier-hover);
+}
+
+.my-menu-button:disabled {
+  color: var(--text-faint);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.my-menu-button svg {
+  width: 100%;
+  height: 100%;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .my-menu-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+.my-menu-icon-suggestion {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2);
+}
+
+.my-menu-icon-preview {
+  display: inline-flex;
+  width: var(--icon-m);
+  height: var(--icon-m);
+}

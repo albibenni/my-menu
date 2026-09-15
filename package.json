@@ -1,0 +1,47 @@
+{
+  "name": "my-menu",
+  "version": "0.1.0",
+  "description": "A configurable command toolbar for Obsidian",
+  "main": "main.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc --noEmit && node esbuild.config.mjs production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "check:metadata": "node verify-release.mjs",
+    "check": "pnpm run lint && pnpm run test && pnpm run check:metadata && pnpm run build",
+    "release": "node release.mjs",
+    "version": "node version-bump.mjs && node verify-release.mjs && pnpm run format && git add manifest.json versions.json",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "obsidian",
+    "toolbar",
+    "commands",
+    "mobile"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.13",
+    "@types/node": "^26.1.2",
+    "esbuild": "0.28.1",
+    "husky": "^9.1.7",
+    "jsdom": "^30.0.1",
+    "obsidian": "^1.13.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "onlyBuiltDependencies": [
+    "esbuild"
+  ]
+}

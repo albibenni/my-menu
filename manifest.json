@@ -1,0 +1,10 @@
+{
+  "id": "my-menu",
+  "name": "MyMenu",
+  "version": "0.1.0",
+  "minAppVersion": "1.13.0",
+  "description": "Add a customizable, mobile-friendly command toolbar to your workspace.",
+  "author": "AlbiBenni",
+  "authorUrl": "https://github.com/albibenni",
+  "isDesktopOnly": false
+}
