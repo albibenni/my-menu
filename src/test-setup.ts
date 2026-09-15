@@ -9,7 +9,10 @@ function createElement(
   tag: string,
   options: ElementOptions = {},
 ): HTMLElement {
-  const element = parent.ownerDocument.createElement(tag);
+  const element = parent.ownerDocument.createElementNS(
+    "http://www.w3.org/1999/xhtml",
+    tag,
+  ) as HTMLElement;
   const classes = typeof options.cls === "string" ? [options.cls] : options.cls;
   if (classes) element.classList.add(...classes);
   if (options.text !== undefined) element.textContent = options.text;
