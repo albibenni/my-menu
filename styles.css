@@ -1,14 +1,14 @@
 .my-menu-toolbar {
   position: fixed;
   z-index: var(--layer-menu, 100);
-  left: 50%;
+  left: var(--my-menu-center-x, 50%);
   bottom: calc(
     var(--my-menu-bottom, 12px) +
     var(--my-menu-keyboard, 0px) +
     env(safe-area-inset-bottom, 0px)
   );
   display: flex;
-  max-width: calc(100vw - 24px);
+  max-width: var(--my-menu-max-width, calc(100vw - 24px));
   gap: var(--my-menu-gap, 4px);
   padding: 4px;
   overflow-x: auto;

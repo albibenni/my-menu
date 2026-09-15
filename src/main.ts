@@ -13,7 +13,7 @@ import {
   parseSettings,
 } from "./settings-schema";
 import { MyMenuToolbar } from "./toolbar";
-import { calculateKeyboardOffset } from "./viewport";
+import { availableHorizontalBounds, calculateKeyboardOffset } from "./viewport";
 
 export default class MyMenuPlugin extends Plugin {
   settings!: MyMenuSettings;
@@ -33,9 +33,10 @@ export default class MyMenuPlugin extends Plugin {
 
     this.app.workspace.onLayoutReady(() => this.mountToolbar());
     this.registerEvent(
-      this.app.workspace.on("layout-change", () =>
-        this.toolbar?.render(this.settings),
-      ),
+      this.app.workspace.on("layout-change", () => this.refreshToolbar()),
+    );
+    this.registerEvent(
+      this.app.workspace.on("resize", () => this.refreshToolbar()),
     );
   }
 
@@ -47,7 +48,7 @@ export default class MyMenuPlugin extends Plugin {
   async updateSettings(settings: MyMenuSettings): Promise<void> {
     this.settings = parseSettings(settings);
     await this.saveData(this.settings);
-    this.toolbar?.render(this.settings);
+    this.refreshToolbar();
   }
 
   defaultButtons(): MenuButton[] {
@@ -118,8 +119,31 @@ export default class MyMenuPlugin extends Plugin {
       reportUnavailable: (commandId) =>
         new Notice(`MyMenu command is unavailable: ${commandId}`),
     });
-    this.toolbar.render(this.settings);
+    this.refreshToolbar();
     this.trackVisibleViewport();
+  }
+
+  private refreshToolbar(): void {
+    if (!this.toolbar) return;
+    this.toolbar.render(this.settings);
+    const mainLeaf = this.app.workspace.getMostRecentLeaf(
+      this.app.workspace.rootSplit,
+    );
+    const availableArea =
+      mainLeaf?.view.containerEl ?? this.app.workspace.containerEl;
+    const contentBounds = availableArea.getBoundingClientRect();
+    const leftLeaf = this.app.workspace.leftSplit.collapsed
+      ? null
+      : this.app.workspace.getMostRecentLeaf(this.app.workspace.leftSplit);
+    const rightLeaf = this.app.workspace.rightSplit.collapsed
+      ? null
+      : this.app.workspace.getMostRecentLeaf(this.app.workspace.rightSplit);
+    const bounds = availableHorizontalBounds(
+      contentBounds,
+      leftLeaf?.view.containerEl.getBoundingClientRect(),
+      rightLeaf?.view.containerEl.getBoundingClientRect(),
+    );
+    this.toolbar.setAvailableBounds(bounds);
   }
 
   private trackVisibleViewport(): void {

@@ -28,6 +28,10 @@ describe("MyMenuPlugin", () => {
       },
       workspace: {
         containerEl: document.body,
+        rootSplit: {},
+        leftSplit: { collapsed: true },
+        rightSplit: { collapsed: true },
+        getMostRecentLeaf: () => null,
         onLayoutReady: (callback: () => void) => callback(),
         on: () => ({ unsubscribe: () => undefined }),
       },

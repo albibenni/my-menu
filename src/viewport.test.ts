@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateKeyboardOffset } from "./viewport";
+import { availableHorizontalBounds, calculateKeyboardOffset } from "./viewport";
 
 describe("calculateKeyboardOffset", () => {
   it("moves the toolbar by the covered portion of the layout viewport", () => {
@@ -20,5 +20,17 @@ describe("calculateKeyboardOffset", () => {
         visibleOffsetTop: 0,
       }),
     ).toBe(0);
+  });
+});
+
+describe("availableHorizontalBounds", () => {
+  it("excludes mobile drawers that overlay the main content", () => {
+    expect(
+      availableHorizontalBounds(
+        { left: 0, right: 1024 },
+        { left: 0, right: 320 },
+        undefined,
+      ),
+    ).toEqual({ left: 320, width: 704 });
   });
 });

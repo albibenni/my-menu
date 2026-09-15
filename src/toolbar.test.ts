@@ -57,4 +57,22 @@ describe("MyMenuToolbar", () => {
     expect(pointerDown.defaultPrevented).toBe(true);
     expect(execute).toHaveBeenCalledWith("editor:toggle-bold");
   });
+
+  it("centers and constrains itself within the main content bounds", () => {
+    const host = document.createElement("div");
+    const toolbar = new MyMenuToolbar(host, {
+      commands: { find: () => undefined, execute: vi.fn() },
+      drawIcon: vi.fn(),
+      showTooltip: vi.fn(),
+      reportUnavailable: vi.fn(),
+    });
+
+    toolbar.setAvailableBounds({ left: 280, width: 760 });
+
+    const element = host.querySelector<HTMLElement>(".my-menu-toolbar");
+    expect(element?.style.getPropertyValue("--my-menu-center-x")).toBe("660px");
+    expect(element?.style.getPropertyValue("--my-menu-max-width")).toBe(
+      "736px",
+    );
+  });
 });

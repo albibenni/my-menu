@@ -18,6 +18,11 @@ interface ToolbarDependencies {
   reportUnavailable(commandId: string): void;
 }
 
+interface HorizontalBounds {
+  left: number;
+  width: number;
+}
+
 export class MyMenuToolbar {
   private readonly element: HTMLDivElement;
 
@@ -54,6 +59,17 @@ export class MyMenuToolbar {
     this.element.style.setProperty(
       "--my-menu-keyboard",
       `${Math.max(0, offset)}px`,
+    );
+  }
+
+  setAvailableBounds(bounds: HorizontalBounds): void {
+    this.element.style.setProperty(
+      "--my-menu-center-x",
+      `${bounds.left + bounds.width / 2}px`,
+    );
+    this.element.style.setProperty(
+      "--my-menu-max-width",
+      `${Math.max(0, bounds.width - 24)}px`,
     );
   }
 
