@@ -1,7 +1,7 @@
 {
   "id": "my-menu",
   "name": "MyMenu",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "minAppVersion": "1.13.0",
   "description": "Add a customizable, mobile-friendly command toolbar to your workspace.",
   "author": "AlbiBenni",
