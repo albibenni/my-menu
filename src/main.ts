@@ -38,6 +38,9 @@ export default class MyMenuPlugin extends Plugin {
     this.registerEvent(
       this.app.workspace.on("resize", () => this.refreshToolbar()),
     );
+    this.registerDomEvent(this.app.workspace.containerEl, "transitionend", () =>
+      this.refreshToolbar(),
+    );
   }
 
   onunload(): void {

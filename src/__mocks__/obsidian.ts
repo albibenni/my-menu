@@ -31,6 +31,13 @@ export class Plugin {
   addSettingTab(): void {}
   register(): void {}
   registerEvent(): void {}
+  registerDomEvent(
+    element: HTMLElement,
+    event: string,
+    callback: EventListener,
+  ): void {
+    element.addEventListener(event, callback);
+  }
   async loadData(): Promise<unknown> {
     return this.data;
   }
