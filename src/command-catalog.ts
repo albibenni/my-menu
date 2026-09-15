@@ -1,6 +1,6 @@
 import type { AvailableCommand, CommandCatalog } from "./toolbar";
 
-interface RuntimeCommand extends AvailableCommand {}
+type RuntimeCommand = AvailableCommand;
 
 interface RuntimeCommands {
   commands?: Record<string, RuntimeCommand>;

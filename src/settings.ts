@@ -4,7 +4,8 @@ import {
   FuzzySuggestModal,
   getIconIds,
   PluginSettingTab,
-  Setting,
+  type Setting,
+  type SettingDefinitionItem,
   setIcon,
 } from "obsidian";
 import type MyMenuPlugin from "./main";
@@ -18,85 +19,110 @@ export class MyMenuSettingTab extends PluginSettingTab {
     super(app, plugin);
   }
 
-  display(): void {
-    this.containerEl.empty();
-    this.containerEl.addClass("my-menu-settings");
-
-    new Setting(this.containerEl).setName("Toolbar").setHeading();
-    this.addVisibilitySetting();
-    this.addSizeSetting();
-    this.addGapSetting();
-    this.addOffsetSetting();
-    new Setting(this.containerEl).setName("Buttons").setHeading();
-    this.plugin.settings.buttons.forEach((_, index) => {
-      this.addButtonRow(index);
-    });
-    this.addButtonActions();
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    return [
+      {
+        type: "group",
+        heading: "Toolbar",
+        items: [
+          {
+            name: "Show toolbar",
+            desc: "Show MyMenu throughout the main workspace.",
+            control: {
+              type: "toggle",
+              key: "visible",
+              defaultValue: true,
+            },
+          },
+          {
+            name: "Button size",
+            desc: "Size of each command button.",
+            control: {
+              type: "slider",
+              key: "buttonSize",
+              min: 28,
+              max: 64,
+              step: 1,
+              displayFormat: formatPixels,
+            },
+          },
+          {
+            name: "Button spacing",
+            desc: "Space between command buttons.",
+            control: {
+              type: "slider",
+              key: "buttonGap",
+              min: 0,
+              max: 24,
+              step: 1,
+              displayFormat: formatPixels,
+            },
+          },
+          {
+            name: "Vertical offset",
+            desc: "Distance above the bottom edge or on-screen keyboard.",
+            control: {
+              type: "slider",
+              key: "bottomOffset",
+              min: 0,
+              max: 200,
+              step: 1,
+              displayFormat: formatPixels,
+            },
+          },
+        ],
+      },
+      {
+        type: "group",
+        heading: "Buttons",
+        items: [
+          ...this.plugin.settings.buttons.map((item, index) => ({
+            name:
+              this.plugin.commands.find(item.commandId)?.name ??
+              "Unavailable command",
+            desc: item.commandId,
+            render: (setting: Setting) => this.addButtonRow(setting, index),
+          })),
+          {
+            name: "Add command",
+            desc: "Add any command registered by Obsidian or another plugin.",
+            render: (setting: Setting) => this.addButtonActions(setting),
+          },
+        ],
+      },
+    ];
   }
 
-  private addVisibilitySetting(): void {
-    new Setting(this.containerEl)
-      .setName("Show toolbar")
-      .setDesc("Show MyMenu throughout the main workspace.")
-      .addToggle((toggle) =>
-        toggle.setValue(this.plugin.settings.visible).onChange((visible) => {
-          void this.commit({ ...this.plugin.settings, visible });
-        }),
-      );
+  getControlValue(key: string): unknown {
+    switch (key) {
+      case "visible":
+      case "buttonSize":
+      case "buttonGap":
+      case "bottomOffset":
+        return this.plugin.settings[key];
+      default:
+        return undefined;
+    }
   }
 
-  private addSizeSetting(): void {
-    new Setting(this.containerEl)
-      .setName("Button size")
-      .setDesc(`${this.plugin.settings.buttonSize}px`)
-      .addSlider((slider) =>
-        slider
-          .setLimits(28, 64, 1)
-          .setValue(this.plugin.settings.buttonSize)
-          .setDynamicTooltip()
-          .onChange((buttonSize) => {
-            void this.commit({ ...this.plugin.settings, buttonSize }, false);
-          }),
-      );
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    if (key === "visible" && typeof value === "boolean") {
+      await this.commit({ ...this.plugin.settings, visible: value }, false);
+      return;
+    }
+    if (typeof value !== "number") return;
+    switch (key) {
+      case "buttonSize":
+      case "buttonGap":
+      case "bottomOffset":
+        await this.commit({ ...this.plugin.settings, [key]: value }, false);
+    }
   }
 
-  private addGapSetting(): void {
-    new Setting(this.containerEl)
-      .setName("Button spacing")
-      .setDesc(`${this.plugin.settings.buttonGap}px`)
-      .addSlider((slider) =>
-        slider
-          .setLimits(0, 24, 1)
-          .setValue(this.plugin.settings.buttonGap)
-          .setDynamicTooltip()
-          .onChange((buttonGap) => {
-            void this.commit({ ...this.plugin.settings, buttonGap }, false);
-          }),
-      );
-  }
-
-  private addOffsetSetting(): void {
-    new Setting(this.containerEl)
-      .setName("Vertical offset")
-      .setDesc(`${this.plugin.settings.bottomOffset}px above the bottom edge.`)
-      .addSlider((slider) =>
-        slider
-          .setLimits(0, 200, 1)
-          .setValue(this.plugin.settings.bottomOffset)
-          .setDynamicTooltip()
-          .onChange((bottomOffset) => {
-            void this.commit({ ...this.plugin.settings, bottomOffset }, false);
-          }),
-      );
-  }
-
-  private addButtonRow(index: number): void {
+  private addButtonRow(setting: Setting, index: number): void {
     const item = this.plugin.settings.buttons[index];
     if (!item) return;
-    const command = this.plugin.commands.find(item.commandId);
-    new Setting(this.containerEl)
-      .setName(command?.name ?? "Unavailable command")
-      .setDesc(item.commandId)
+    setting
       .addExtraButton((button) =>
         button
           .setIcon(item.icon)
@@ -131,10 +157,8 @@ export class MyMenuSettingTab extends PluginSettingTab {
       );
   }
 
-  private addButtonActions(): void {
-    new Setting(this.containerEl)
-      .setName("Add command")
-      .setDesc("Add any command registered by Obsidian or another plugin.")
+  private addButtonActions(setting: Setting): void {
+    setting
       .addButton((button) =>
         button
           .setButtonText("Add button")
@@ -163,7 +187,7 @@ export class MyMenuSettingTab extends PluginSettingTab {
       .addButton((button) =>
         button
           .setButtonText("Reset defaults")
-          .setWarning()
+          .setDestructive()
           .onClick(() => {
             void this.commit({
               ...this.plugin.settings,
@@ -213,10 +237,10 @@ export class MyMenuSettingTab extends PluginSettingTab {
 
   private async commit(
     settings: MyMenuPlugin["settings"],
-    redrawSettings = true,
+    updateDefinitions = true,
   ): Promise<void> {
     await this.plugin.updateSettings(settings);
-    if (redrawSettings) this.display();
+    if (updateDefinitions) this.update();
   }
 }
 
@@ -274,4 +298,8 @@ class IconPicker extends FuzzySuggestModal<string> {
 
 function createButtonId(): string {
   return `button-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function formatPixels(value: number): string {
+  return `${value}px`;
 }

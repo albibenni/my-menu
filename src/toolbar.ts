@@ -30,11 +30,9 @@ export class MyMenuToolbar {
     host: HTMLElement,
     private readonly dependencies: ToolbarDependencies,
   ) {
-    this.element = host.ownerDocument.createElement("div");
-    this.element.className = "my-menu-toolbar";
+    this.element = host.createDiv({ cls: "my-menu-toolbar" });
     this.element.setAttribute("role", "toolbar");
     this.element.setAttribute("aria-label", "MyMenu commands");
-    host.append(this.element);
   }
 
   render(settings: MyMenuSettings): void {
@@ -79,9 +77,10 @@ export class MyMenuToolbar {
 
   private createButton(commandId: string, icon: string): HTMLButtonElement {
     const command = this.dependencies.commands.find(commandId);
-    const button = this.element.ownerDocument.createElement("button");
-    button.type = "button";
-    button.className = "my-menu-button clickable-icon";
+    const button = this.element.createEl("button", {
+      cls: ["my-menu-button", "clickable-icon"],
+      attr: { type: "button" },
+    });
     button.disabled = command === undefined;
 
     const label = command?.name ?? `Unavailable command: ${commandId}`;

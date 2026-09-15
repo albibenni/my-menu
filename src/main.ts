@@ -1,10 +1,6 @@
 import { type Editor, Notice, Plugin, setIcon, setTooltip } from "obsidian";
 import { ObsidianCommandCatalog } from "./command-catalog";
-import {
-  type TextEditor,
-  toggleCodeBlock,
-  toggleInlineMarkup,
-} from "./formatting";
+import { toggleCodeBlock, toggleInlineMarkup } from "./formatting";
 import { MyMenuSettingTab } from "./settings";
 import {
   DEFAULT_BUTTONS,
@@ -81,7 +77,7 @@ export default class MyMenuPlugin extends Plugin {
       id: "toggle-code-block",
       name: "Toggle code block",
       icon: "square-code",
-      editorCallback: (editor: Editor) => toggleCodeBlock(editor as TextEditor),
+      editorCallback: (editor: Editor) => toggleCodeBlock(editor),
     });
   }
 
@@ -95,7 +91,7 @@ export default class MyMenuPlugin extends Plugin {
       id,
       name,
       editorCallback: (editor: Editor) =>
-        toggleInlineMarkup(editor as TextEditor, opening, closing),
+        toggleInlineMarkup(editor, opening, closing),
     });
   }
 

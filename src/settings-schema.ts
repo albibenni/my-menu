@@ -69,9 +69,9 @@ const buttonSchema = z.object({
 const settingsSchema = z.object({
   schemaVersion: z.literal(1).default(1),
   visible: z.boolean().default(true),
-  buttonSize: z.number().finite().min(28).max(64).default(36),
-  buttonGap: z.number().finite().min(0).max(24).default(4),
-  bottomOffset: z.number().finite().min(0).max(200).default(12),
+  buttonSize: z.number().min(28).max(64).default(36),
+  buttonGap: z.number().min(0).max(24).default(4),
+  bottomOffset: z.number().min(0).max(200).default(12),
   buttons: z.array(buttonSchema).default(() => cloneDefaultButtons()),
 });
 
