@@ -14,7 +14,6 @@ export interface CommandCatalog {
 interface ToolbarDependencies {
   commands: CommandCatalog;
   drawIcon(element: HTMLElement, icon: string): void;
-  showTooltip(element: HTMLElement, text: string): void;
   reportUnavailable(commandId: string): void;
 }
 
@@ -85,7 +84,7 @@ export class MyMenuToolbar {
 
     const label = command?.name ?? `Unavailable command: ${commandId}`;
     button.setAttribute("aria-label", label);
-    this.dependencies.showTooltip(button, label);
+    button.title = label;
     this.dependencies.drawIcon(button, icon);
 
     button.addEventListener("pointerdown", (event) => event.preventDefault());

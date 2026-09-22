@@ -1,4 +1,4 @@
-import { type Editor, Notice, Plugin, setIcon, setTooltip } from "obsidian";
+import { type Editor, Notice, Plugin, setIcon } from "obsidian";
 import { ObsidianCommandCatalog } from "./command-catalog";
 import { toggleCodeBlock, toggleInlineMarkup } from "./formatting";
 import { MyMenuSettingTab } from "./settings";
@@ -114,7 +114,6 @@ export default class MyMenuPlugin extends Plugin {
     this.toolbar = new MyMenuToolbar(this.app.workspace.containerEl, {
       commands: this.commandCatalog,
       drawIcon: (element, icon) => setIcon(element, icon),
-      showTooltip: (element, text) => setTooltip(element, text),
       reportUnavailable: (commandId) =>
         new Notice(`MyMenu command is unavailable: ${commandId}`),
     });
