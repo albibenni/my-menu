@@ -35,7 +35,7 @@ export default class MyMenuPlugin extends Plugin {
       this.app.workspace.on("resize", () => this.refreshToolbar()),
     );
     this.registerDomEvent(this.app.workspace.containerEl, "transitionend", () =>
-      this.refreshToolbar(),
+      this.updateToolbarBounds(),
     );
   }
 
@@ -125,6 +125,11 @@ export default class MyMenuPlugin extends Plugin {
   private refreshToolbar(): void {
     if (!this.toolbar) return;
     this.toolbar.render(this.settings);
+    this.updateToolbarBounds();
+  }
+
+  private updateToolbarBounds(): void {
+    if (!this.toolbar) return;
     const mainLeaf = this.app.workspace.getMostRecentLeaf(
       this.app.workspace.rootSplit,
     );

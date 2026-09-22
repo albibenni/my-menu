@@ -86,4 +86,26 @@ describe("MyMenuPlugin", () => {
 
     expect(toolbar?.style.getPropertyValue("--my-menu-center-x")).toBe("500px");
   });
+
+  it("keeps hovered buttons mounted when a transition finishes", async () => {
+    const app = {
+      commands: { commands: {}, executeCommandById: () => true },
+      workspace: {
+        containerEl: document.body,
+        rootSplit: {},
+        leftSplit: { collapsed: true },
+        rightSplit: { collapsed: true },
+        getMostRecentLeaf: () => null,
+        onLayoutReady: (callback: () => void) => callback(),
+        on: () => ({ unsubscribe: () => undefined }),
+      },
+    };
+    const plugin = new MyMenuPlugin(app as never, { id: "my-menu" } as never);
+    await plugin.onload();
+    const button = document.querySelector(".my-menu-button");
+
+    button?.dispatchEvent(new Event("transitionend", { bubbles: true }));
+
+    expect(document.querySelector(".my-menu-button")).toBe(button);
+  });
 });
