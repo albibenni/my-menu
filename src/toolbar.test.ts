@@ -29,7 +29,7 @@ describe("MyMenuToolbar", () => {
     expect(button?.getAttribute("aria-label")).toBe(
       "Unavailable command: ask-ai:open-selection",
     );
-    expect(button?.title).toBe("Unavailable command: ask-ai:open-selection");
+    expect(button?.hasAttribute("title")).toBe(false);
   });
 
   it("executes an available command without taking pointer focus", () => {
@@ -57,7 +57,7 @@ describe("MyMenuToolbar", () => {
     expect(execute).toHaveBeenCalledWith("editor:toggle-bold");
   });
 
-  it("shows the assigned command name on hover", () => {
+  it("exposes the assigned command name without adding a native tooltip", () => {
     const host = document.createElement("div");
     const toolbar = new MyMenuToolbar(host, {
       commands: {
@@ -73,7 +73,9 @@ describe("MyMenuToolbar", () => {
       buttons: [{ id: "bold", commandId: "editor:toggle-bold", icon: "bold" }],
     });
 
-    expect(host.querySelector("button")?.title).toBe("Toggle bold");
+    const button = host.querySelector("button");
+    expect(button?.getAttribute("aria-label")).toBe("Toggle bold");
+    expect(button?.hasAttribute("title")).toBe(false);
   });
 
   it("centers and constrains itself within the main content bounds", () => {

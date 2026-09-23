@@ -84,7 +84,6 @@ export class MyMenuToolbar {
 
     const label = command?.name ?? `Unavailable command: ${commandId}`;
     button.setAttribute("aria-label", label);
-    button.title = label;
     this.dependencies.drawIcon(button, icon);
 
     button.addEventListener("pointerdown", (event) => event.preventDefault());
